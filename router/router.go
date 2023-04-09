@@ -28,7 +28,7 @@ func StartServer() *gin.Engine {
 
 		productRouter.POST("/create", controllers.CreateProduct)
 
-		productRouter.GET("/all", middleware.ProductAuthorization(), controllers.GetAllProduct)
+		productRouter.GET("/all", controllers.GetAllProduct)
 
 		productRouter.GET("/:productID", middleware.ProductAuthorization(), controllers.GetProductById)
 

@@ -29,7 +29,6 @@ func GenerateToken(id, role uint, email string) (res string) {
 }
 
 func VerifyToken(ctx *gin.Context) (res interface{}, err error) {
-	// errResponse := errors.New("Sign in to procced")
 
 	headerToken := ctx.Request.Header.Get("Authorization")
 	bearer := strings.HasPrefix(headerToken, "Bearer")

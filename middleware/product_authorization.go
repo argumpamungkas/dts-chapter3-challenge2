@@ -19,34 +19,10 @@ func ProductAuthorization() gin.HandlerFunc {
 		userData := ctx.MustGet("userData").(jwt.MapClaims)
 		userID := uint(userData["id"].(float64))
 		roleID := uint(userData["role"].(float64))
-
-		if productID == 0 {
-			var products []models.Product
-
-			if roleID == 1 {
-				err := db.Debug().Find(&products).Error
-				if err != nil {
-					ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-						"message": err.Error(),
-					})
-					return
-				}
-			} else if roleID == 2 {
-				err := db.Debug().Where("user_id = ?", userID).Find(&products).Error
-				if err != nil {
-					ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-						"message": err.Error(),
-					})
-					return
-				}
-			}
-
+		if roleID == 1 {
 			ctx.Next()
-		}
-
-		var product models.Product
-
-		if productID != 0 {
+		} else {
+			var product models.Product
 			err := db.Select("user_id").First(&product, uint(productID)).Error
 			if err != nil {
 				ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
@@ -54,18 +30,14 @@ func ProductAuthorization() gin.HandlerFunc {
 				})
 				return
 			}
-			if roleID == 1 {
-				ctx.Next()
-			}
-
-			if roleID == 2 && product.UserID != userID {
+			if product.UserID != userID {
 				ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 					"message": "You are not allowed to access this data",
 				})
 				return
+			} else {
+				ctx.Next()
 			}
-			ctx.Next()
 		}
-
 	}
 }

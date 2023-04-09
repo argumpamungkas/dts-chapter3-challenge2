@@ -24,12 +24,10 @@ func GenerateToken(id, role uint, email string) (res string) {
 		log.Println("error parse token")
 		return
 	}
-
 	return
 }
 
 func VerifyToken(ctx *gin.Context) (res interface{}, err error) {
-
 	headerToken := ctx.Request.Header.Get("Authorization")
 	bearer := strings.HasPrefix(headerToken, "Bearer")
 	if !bearer {

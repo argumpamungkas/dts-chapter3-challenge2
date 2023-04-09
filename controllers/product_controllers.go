@@ -173,7 +173,7 @@ func DeleteProduct(ctx *gin.Context) {
 	err = db.Debug().Where("id = ?", productID).First(&product).Delete(&product).Error
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"message": "Data not found",
+			"message": err.Error(),
 		})
 		return
 	}

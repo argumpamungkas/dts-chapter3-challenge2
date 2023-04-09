@@ -15,10 +15,10 @@ func ProductAuthorization() gin.HandlerFunc {
 		db := repo.GetDB()
 
 		productID, _ := strconv.Atoi(ctx.Param("productID"))
-
 		userData := ctx.MustGet("userData").(jwt.MapClaims)
 		userID := uint(userData["id"].(float64))
 		roleID := uint(userData["role"].(float64))
+
 		if roleID == 1 {
 			ctx.Next()
 		} else {

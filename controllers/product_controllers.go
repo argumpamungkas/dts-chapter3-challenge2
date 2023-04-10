@@ -110,10 +110,6 @@ func UpdateProduct(ctx *gin.Context) {
 		return
 	}
 
-	userData := ctx.MustGet("userData").(jwt.MapClaims)
-	userID := uint(userData["id"].(float64))
-	roleID := uint(userData["role"].(float64))
-
 	if contentType == appJson {
 		ctx.ShouldBindJSON(&product)
 	} else {
@@ -134,27 +130,14 @@ func UpdateProduct(ctx *gin.Context) {
 	}
 
 	product.ID = uint(productID)
+	product.UserID = findProduct.UserID
 
-	if roleID == 1 {
-
-		product.UserID = findProduct.UserID
-
-		err := db.Model(&product).Where("id = ?", productID).Updates(product).Error
-		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"message": err.Error(),
-			})
-			return
-		}
-	} else if roleID == 2 {
-		product.UserID = userID
-		err := db.Model(&product).Where("id = ?", productID).Updates(product).Error
-		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"message": err.Error(),
-			})
-			return
-		}
+	err = db.Model(&product).Where("id = ?", productID).Updates(product).Error
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
 	}
 
 	ctx.JSON(http.StatusCreated, product)
